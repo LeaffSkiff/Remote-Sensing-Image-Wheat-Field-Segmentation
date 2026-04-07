@@ -63,11 +63,8 @@ model_predictions/
 
 # Training datasets (usually large files)
 # Keep structure but ignore large data
-train_dataset/*.jpg
-train_dataset/*.png
-train_dataset/*.tif
-train_dataset/*.tiff
-train_dataset/*.npy
+train_dataset
+_old_backup
 
 # Prediction output
 to_predict/
