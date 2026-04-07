@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Machine Learning / Deep Learning
+# Model checkpoints and weights
+*.pth
+*.pt
+*.pkl
+*.h5
+*.ckpt
+*.onnx
+*.pb
+models/
+checkpoints/
+
+# TensorBoard
+logs/
+runs/
+
+# WandB
+wandb/
+
+# Labelme annotations (auto-generated)
+labelme_annotations/
+
+# Model predictions (output artifacts)
+model_predictions/
+
+# Training datasets (usually large files)
+# Keep structure but ignore large data
+train_dataset/*.jpg
+train_dataset/*.png
+train_dataset/*.tif
+train_dataset/*.tiff
+train_dataset/*.npy
+
+# Prediction output
+to_predict/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# Claude Code
+.claude/
