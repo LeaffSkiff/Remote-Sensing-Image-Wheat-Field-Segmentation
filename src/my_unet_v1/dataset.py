@@ -41,27 +41,71 @@ class SegmentationDataset(Dataset):
         return image, mask
 
 class TestDataset(Dataset):
+    """
+    测试数据集 - 支持两种目录结构:
+    1. 扁平结构：images_dir/tile_001.png, images_dir/tile_002.png, ...
+    2. 文件夹结构：images_dir/tile_001/img.png, images_dir/tile_002/img.png, ...
+    """
     def __init__(self, images_dir, masks_dir=None, transform=None, mask_transform=None):
         self.images_dir = images_dir
         self.masks_dir = masks_dir
         self.transform = transform
         self.mask_transform = mask_transform
-        self.image_names = [f for f in os.listdir(images_dir)
-                            if f.endswith(('.png', '.jpg', '.jpeg'))]
-        self.image_names.sort()
+
+        # 检查是否是文件夹结构 (每个子文件夹包含 img.png 和 label.png)
+        self.is_folder_structure = False
+        self.image_folders = []
+
+        for name in os.listdir(images_dir):
+            folder_path = os.path.join(images_dir, name)
+            if os.path.isdir(folder_path):
+                img_path = os.path.join(folder_path, 'img.png')
+                if os.path.exists(img_path):
+                    self.is_folder_structure = True
+                    self.image_folders.append(name)
+
+        if self.is_folder_structure:
+            self.image_folders.sort()
+        else:
+            # 扁平结构
+            self.image_names = [f for f in os.listdir(images_dir)
+                                if f.endswith(('.png', '.jpg', '.jpeg'))]
+            self.image_names.sort()
 
     def __len__(self):
+        if self.is_folder_structure:
+            return len(self.image_folders)
         return len(self.image_names)
 
     def __getitem__(self, idx):
-        image_path = os.path.join(self.images_dir, self.image_names[idx])
+        if self.is_folder_structure:
+            # 文件夹结构：folder/img.png
+            folder_name = self.image_folders[idx]
+            folder_path = os.path.join(self.images_dir, folder_name)
+            image_path = os.path.join(folder_path, 'img.png')
+
+            # 如果有 masks_dir，读取对应的 label.png
+            if self.masks_dir is not None:
+                mask_path = os.path.join(self.masks_dir, folder_name, 'label.png')
+            else:
+                # 尝试在同一文件夹中找 label.png
+                mask_path = os.path.join(folder_path, 'label.png')
+                if not os.path.exists(mask_path):
+                    mask_path = None
+        else:
+            # 扁平结构
+            image_path = os.path.join(self.images_dir, self.image_names[idx])
+            if self.masks_dir is not None:
+                mask_path = os.path.join(self.masks_dir, self.image_names[idx])
+            else:
+                mask_path = None
+
         image = Image.open(image_path).convert('RGB')
         if self.transform:
             image = self.transform(image)
 
-        if self.masks_dir is not None:
-            mask_path = os.path.join(self.masks_dir, self.image_names[idx])
-            mask = Image.open(mask_path).convert('L')  # 转为单通道灰度图（黑白）
+        if mask_path and os.path.exists(mask_path):
+            mask = Image.open(mask_path).convert('L')
             if self.mask_transform:
                 mask = self.mask_transform(mask)
             return image, mask

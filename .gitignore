@@ -1,4 +1,4 @@
-# Python
+# ==================== Python ====================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -20,23 +20,25 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
+# ==================== Virtual Environments ====================
 venv/
 env/
 ENV/
-.venv
+.venv/
 
-# IDE
+# ==================== IDE ====================
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
+*.sublime-project
+*.sublime-workspace
 
-# Jupyter Notebook
+# ==================== Jupyter ====================
 .ipynb_checkpoints/
 
-# Machine Learning / Deep Learning
+# ==================== Machine Learning / Deep Learning ====================
 # Model checkpoints and weights
 *.pth
 *.pt
@@ -48,38 +50,39 @@ ENV/
 models/
 checkpoints/
 
-# TensorBoard
+# TensorBoard logs
 logs/
 runs/
 
 # WandB
 wandb/
 
-# Labelme annotations (auto-generated)
-labelme_annotations/
+# ==================== Dataset ====================
+# Original dataset (should not be tracked)
+data_set/
 
-# Model predictions (output artifacts)
-model_predictions/
+# Processed data (auto-generated)
+data/processed/
 
-# Training datasets (usually large files)
-# Keep structure but ignore large data
-train_dataset
-_old_backup
+# ==================== MMSegmentation ====================
+mmseg/work_dirs/
+mmseg/visualizations/
 
-# Prediction output
+# ==================== Prediction Output ====================
+predictions/
 to_predict/
 
-# OS
+# ==================== OS ====================
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Logs
+# ==================== Logs ====================
 *.log
 
-# Environment variables
+# ==================== Environment Variables ====================
 .env
 .env.local
 
-# Claude Code
+# ==================== Claude Code ====================
 .claude/
