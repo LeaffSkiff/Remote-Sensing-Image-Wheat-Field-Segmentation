@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from tqdm import tqdm
 from PIL import Image
-import numpy as nperr
+import numpy as np
 import os
 import argparse
 
@@ -60,7 +60,7 @@ def test_model(model_path, images_dir, output_dir, threshold=0.5):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='测试小麦田分割模型')
     parser.add_argument('--model', type=str, default=r'D:\Develop\Remote-Sensing-Image-Wheat-Field-Segmentation\Remote-Sensing-Image-Wheat-Field-Segmentation\src\my_unet_v1\model\model_epoch_20.pth', help='模型权重路径')
-    parser.add_argument('--images', type=str, default=r'D:\Develop\Remote-Sensing-Image-Wheat-Field-Segmentation\Remote-Sensing-Image-Wheat-Field-Segmentation\data_set\labelme_output', help='测试图像目录')
+    parser.add_argument('--images', type=str, default=r'D:\Develop\Remote-Sensing-Image-Wheat-Field-Segmentation\Remote-Sensing-Image-Wheat-Field-Segmentation\data_set\pytorch_unet_dataset\imgs', help='测试图像目录')
     parser.add_argument('--output', type=str, default=r'D:\Develop\Remote-Sensing-Image-Wheat-Field-Segmentation\Remote-Sensing-Image-Wheat-Field-Segmentation\predictions', help='输出目录')
     parser.add_argument('--threshold', type=float, default=0.5, help='阈值 (默认 0.5)')
 
