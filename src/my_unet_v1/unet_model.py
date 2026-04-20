@@ -4,7 +4,7 @@ import torch.nn.functional as f
 from unet_model_parts import *
 
 class Unet(nn.Module):
-    def __init__(self, in_channels=3, out_channels=1, bilinear=True):
+    def __init__(self, in_channels=3, out_channels=5, bilinear=True):
         #out输出，可以是n类
         super().__init__()
         self.bilinear = bilinear

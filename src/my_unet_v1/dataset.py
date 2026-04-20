@@ -6,6 +6,8 @@ from PIL import Image
 from sympy import is_amicable
 from torch.utils.data import Dataset
 import torchvision.transforms as transforms
+import numpy as np
+import torch
 
 #from my_unet_v1.train import images
 
@@ -16,27 +18,55 @@ class SegmentationDataset(Dataset):
         self.masks_dir = masks_dir
         self.transform = transform
         self.mask_transform = mask_transform
-        #transform可以对数据进行预处理
-        self.image_names = [f for f in os.listdir(images_dir)
-                            if f.endswith(('.png', '.jpg', '.jpeg'))]
-        #取数据存列表
+        #transform 可以对数据进行预处理
+
+        # 获取所有 mask 文件的基本名称（不带扩展名）
+        mask_names = []
+        for f in os.listdir(masks_dir):
+            if f.endswith(('.png', '.jpg', '.jpeg')):
+                mask_names.append(f)
+        mask_names.sort()
+
+        # 匹配图像和标签：通过基本名称匹配（支持不同扩展名）
+        self.image_names = []
+        for img_file in os.listdir(images_dir):
+            if not img_file.endswith(('.png', '.jpg', '.jpeg')):
+                continue
+            # 获取基本名称（去掉扩展名）
+            base_name = os.path.splitext(img_file)[0]
+            # 在 mask 目录中查找同名的文件（支持.png/.jpg 等不同扩展名）
+            for mask_file in os.listdir(masks_dir):
+                if os.path.splitext(mask_file)[0] == base_name:
+                    self.image_names.append(img_file)
+                    break
+
         self.image_names.sort()
+
+        if len(self.image_names) == 0:
+            print(f"警告：在 {images_dir} 和 {masks_dir} 中没有找到匹配的图像 - 标签对")
 
     def __len__(self):
         return len(self.image_names)
 
     def __getitem__(self, idx):
-        image_path = os.path.join(self.images_dir, self.image_names[idx])
-        mask_path = os.path.join(self.masks_dir, self.image_names[idx])
+        img_file = self.image_names[idx]
+        base_name = os.path.splitext(img_file)[0]
+
+        image_path = os.path.join(self.images_dir, img_file)
+        # 查找对应的 mask 文件
+        mask_path = None
+        for f in os.listdir(self.masks_dir):
+            if os.path.splitext(f)[0] == base_name:
+                mask_path = os.path.join(self.masks_dir, f)
+                break
 
         image = Image.open(image_path).convert('RGB')
-        mask = Image.open(mask_path).convert('L')  # 转为单通道灰度图（黑白）
+        mask = Image.open(mask_path).convert('L')  # 转为单通道灰度图
 
         if self.transform:
             image = self.transform(image)
-        if self.mask_transform:
-            mask = self.mask_transform(mask)
-            mask = (mask > 0).float()
+        # 直接使用 numpy 数组转换，避免 ToTensor 的归一化
+        mask = torch.from_numpy(np.array(mask)).long()
 
         return image, mask
 
@@ -115,7 +145,7 @@ class TestDataset(Dataset):
 
 if __name__ == '__main__':
     transform = transforms.Compose([
-        transforms.ToTensor(),  # 把图像转换为一个张量，同时值变为0-1
+        transforms.ToTensor(),  # 把图像转换为一个张量，同时值变为 0-1
         transforms.Normalize([0.5], [0.5])  # 归一化
     ])
 
