@@ -51,7 +51,12 @@ def train(resume=False, start_epoch=0, epochs=50, save_interval=10, model_dir='.
         model_files = [f for f in os.listdir(model_dir) if f.startswith('model_epoch_') and f.endswith('.pth')]
         if model_files:
             # 按 epoch 排序
+            def get_num(x):
+                s = x.split('_')[-1].split('.')[0]
+                return s.isdigit()
+            model_files = [x for x in model_files if get_num(x)]
             model_files.sort(key=lambda x: int(x.split('_')[-1].split('.')[0]))
+            
             latest_model = model_files[-1]
             if latest_model != 'model_epoch_.pth':  # 排除最终输出文件
                 checkpoint_path = os.path.join(model_dir, latest_model)
@@ -110,19 +115,26 @@ def train(resume=False, start_epoch=0, epochs=50, save_interval=10, model_dir='.
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='训练四分类分割模型')
-    parser.add_argument('--resume', action='store_true', help='是否从 checkpoint 继续训练')
-    parser.add_argument('--epochs', type=int, default=50, help='总训练轮数')
-    parser.add_argument('--start-epoch', type=int, default=0, help='起始 epoch')
-    parser.add_argument('--save-interval', type=int, default=10, help='每多少 epoch 保存一次')
-    parser.add_argument('--model-dir', type=str, default='./model', help='模型保存目录')
+    # parser = argparse.ArgumentParser(description='训练四分类分割模型')
+    # parser.add_argument('--resume', action='store_true', help='是否从 checkpoint 继续训练')
+    # parser.add_argument('--epochs', type=int, default=50, help='总训练轮数')
+    # parser.add_argument('--start-epoch', type=int, default=0, help='起始 epoch')
+    # parser.add_argument('--save-interval', type=int, default=10, help='每多少 epoch 保存一次')
+    # parser.add_argument('--model-dir', type=str, default='./model', help='模型保存目录')
 
-    args = parser.parse_args()
+    # args = parser.parse_args()
 
+    # train(
+    #     resume=args.resume,
+    #     start_epoch=args.start_epoch,
+    #     epochs=args.epochs,
+    #     save_interval=args.save_interval,
+    #     model_dir=args.model_dir
+    # )
     train(
-        resume=args.resume,
-        start_epoch=args.start_epoch,
-        epochs=args.epochs,
-        save_interval=args.save_interval,
-        model_dir=args.model_dir
+        resume=True,
+        start_epoch=50,
+        epochs=50,
+        save_interval=10,
+        model_dir='./model'
     )
